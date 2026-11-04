@@ -5,7 +5,7 @@ Develop a computer vision system to segment a rectangular wooden object and esti
 
 ## Approach
 
-1. **Camera Calibration (1 hour)**
+1. **Camera Calibration (2 hour)**
    - Capture at least 20 checkerboard images using a smartphone.
    - Measure the actual checkerboard square size.
    - Estimate camera intrinsic parameters and distortion coefficients using OpenCV.
@@ -22,7 +22,7 @@ Develop a computer vision system to segment a rectangular wooden object and esti
    - Fine-tune on the collected dataset.
    - Evaluate using mask IoU, mAP@0.5, mAP@0.5:0.95, precision and recall.
 
-4. **Measurement Pipeline (1.5 hours)**
+4. **Measurement Pipeline (2 hours)**
    - Undistort incoming images.
    - Segment the wooden object.
    - Detect checkerboard reference corners.
@@ -35,7 +35,7 @@ Develop a computer vision system to segment a rectangular wooden object and esti
    - Compare system measurements against physical measurements.
    - Calculate mean absolute error and mean percentage error.
 
-6. **Additional Experiments and Documentation (1.5 hours)**
+6. **Additional Experiments and Documentation (1 hours)**
    - Compare measurements from raw and undistorted images.
    - Evaluate one challenging imaging condition.
    - Implement confidence-based measurement rejection where feasible.
@@ -47,7 +47,7 @@ Develop a computer vision system to segment a rectangular wooden object and esti
 - Do not use Ultralytics YOLO or Roboflow models.
 - Keep the test dataset isolated from training and model selection.
 - Use a fixed random seed and record dependency versions.
-- Skip additional experiments if the core measurement pipeline is incomplete.
+- No decision to leave any feature/compoenent of the pipeline.
 
 ## Technical Decisions
 
