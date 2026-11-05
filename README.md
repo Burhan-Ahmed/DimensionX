@@ -4,16 +4,14 @@ A computer-vision project to segment a wooden block in smartphone images and, as
 work, estimate its physical dimensions in millimetres using camera calibration and a
 checkerboard reference.
 
-> **Progress:** The camera calibration parameters, fixed dataset split, Label Studio COCO
-> annotations, and split-specific images and masks are present. Model training was the next
-> stage, but the run was not completed before time ran out. This repository currently has no
-> runnable training script or saved model checkpoint. Evaluation and the measurement
-> pipeline are also unfinished.
+> **Progress:** The camera calibration, fixed annotated dataset, U-Net training/evaluation
+> notebook, trained checkpoint, training history, test predictions, and segmentation metrics
+> are available. The end-to-end pixel-to-millimetre measurement pipeline is not implemented.
 
 ## Setup
 
-The checked-in `requirements.txt` pins the dependencies used by the calibration script.
-From the repository root, create and activate a virtual environment and install them:
+From the repository root, create and activate a virtual environment, then install the
+dependencies listed in `requirements.txt`:
 
 ```powershell
 py -m venv .venv
@@ -22,9 +20,10 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-The segmentation plan uses PyTorch, but no training code is present yet, so PyTorch is not
-included in the current requirements. Add a PyTorch version appropriate for the target runtime
-when implementing training. The repository does not pin a Python version.
+The requirements include the packages used by the calibration and training/evaluation
+notebook. PyTorch and torchvision are intentionally not version-pinned; for GPU training,
+choose versions compatible with the target CUDA runtime. The notebook is designed for Google
+Colab, where PyTorch may already be installed.
 
 ## Hardware
 
@@ -34,8 +33,8 @@ when implementing training. The repository does not pin a Python version.
 | Development computer | Windows 11 64-bit, Intel Core i7-4770K, Intel integrated graphics, 14 GB RAM |
 | Planned training environment | Google Colab; GPU model not recorded |
 
-The development-computer specifications are from the project notes. Record the actual Colab
-runtime details if training is resumed.
+The development-computer specifications are from the project notes. The exact Colab GPU used
+for the saved training run was not recorded.
 
 ## How to run each stage
 
@@ -59,7 +58,7 @@ parameter file.
 
 The fixed split lists are in `dataset/splits/{train,val,test}.txt`. Treat these lists as the
 source of truth; do not regenerate or change them after annotation. The split-specific images
-and masks are already arranged in `dataset/{train,val,test}/images/` and
+and masks are arranged in `dataset/{train,val,test}/images/` and
 `dataset/{train,val,test}/masks/`.
 
 The original Label Studio export is `dataset/Annotation labels/result.json`. The raw capture
@@ -73,13 +72,24 @@ annotations are in `dataset/Annotation labels/result.json`; the corresponding bi
 are stored alongside each split's images. No relabelling command is needed to use the prepared
 dataset.
 
-### 4. Model training
+### 4. Model training and evaluation
 
-Training was not completed before the available time ran out. Although training was the next
-planned step, this repository does not currently contain a model/training script, training
-configuration, recorded training history, or saved checkpoint. There is therefore no
-reproducible training command yet. The dataset is ready to be used by a future training
-pipeline; keep the test split out of training and model selection.
+The training and evaluation workflow is in `Model/code/Pipeline.ipynb`. To run it in Google
+Colab:
+
+1. Upload/open the notebook in Colab and select a runtime. A GPU runtime is recommended.
+2. Put the prepared dataset in Google Drive with this structure:
+   `Dataset/{train,val,test}/{images,masks}/`.
+3. In the notebook, update `DATASET_DIR` to that Drive folder. Review `OUTPUT_DIR` and
+   `MODEL_DIR` as well; these paths determine where the run saves its outputs.
+4. Run all cells in order. The notebook installs packages, verifies image/mask pairs, trains
+   the U-Net, selects a checkpoint by validation IoU, and evaluates on the held-out test set.
+
+The notebook configuration uses a 512-pixel input, batch size 2, at most 30 epochs, learning
+rate `1e-4`, seed 42, and early stopping. Do not use the test split to select or tune a model.
+The repository includes a saved checkpoint and training/evaluation artifacts under
+`Model/results/`; see the results section below. Saved notebook cell outputs may reflect an
+earlier run, so rerun the notebook to reproduce them.
 
 ### 5. Inference and measurement
 
@@ -88,8 +98,9 @@ the segmented object dimensions to millimetres.
 
 ### 6. Evaluation and experiments
 
-Not completed. Test-set segmentation metrics, calliper comparisons, and raw-versus-undistorted
-or failure-condition experiments have not been recorded.
+The notebook evaluates segmentation on the test split and saves metrics and predicted masks.
+Calliper comparisons, raw-versus-undistorted measurement comparisons, and failure-condition
+experiments have not been completed.
 
 ## Dataset summary
 
@@ -101,7 +112,25 @@ or failure-condition experiments have not been recorded.
 | Labelling tool | Label Studio; COCO polygon export |
 | Prepared data | Each split has matching `images/` and binary `masks/` folders |
 
-## Model and results
+## Model and segmentation results
 
-No trained model checkpoint or evaluation results are currently available. Add the training
-configuration, results, and checkpoint location here if those stages are completed.
+The saved checkpoint is `Model/results/weights/unet_best.pth`. Training history is in
+`Model/results/stats/training_history.csv`; test metrics are in
+`Model/results/stats/test_metrics.json`; per-image IoU and AP results are in the same `stats/`
+folder, and predicted masks are in `Model/results/test_predictions/`.
+
+The saved test metrics report:
+
+| Metric | Result |
+|---|---:|
+| Pixel-level test IoU | 0.7763 |
+| Mean per-image mask IoU | 0.7770 |
+| Instance mask AP@0.5 | 1.0000 |
+| Instance mask mAP@0.5:0.95 | 0.5920 |
+| Precision | 0.7873 |
+| Recall | 0.9825 |
+| Best epoch (validation IoU) | 17 (0.7238) |
+
+These are the values recorded in the saved results file; rerun the notebook to independently
+reproduce them. The 9-image test set is small, so interpret the metrics accordingly. This
+segmentation evaluation does not establish accuracy of physical measurements in millimetres.
