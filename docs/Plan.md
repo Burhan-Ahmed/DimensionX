@@ -47,7 +47,7 @@ Develop a computer vision system to segment a rectangular wooden object and esti
 - Do not use Ultralytics YOLO or Roboflow models.
 - Keep the test dataset isolated from training and model selection.
 - Use a fixed random seed and record dependency versions.
-- No decision to leave any feature/compoenent of the pipeline.
+- NO Decision to leave any feature/compoenent of the pipeline.
 
 ## Technical Decisions
 
