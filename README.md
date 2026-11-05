@@ -54,11 +54,35 @@ Original photos go in `dataset/raw/` (not committed).
 
 ```bash
 python dataset/check_raw.py                    # size and full-board check
-python dataset/make_split.py                   # writes dataset/splits/{train,val,test}.txt
-python calibration/undistort_dataset.py        # dataset/raw -> dataset/images
+python dataset/makeSplit.py                    # initial split; writes lists and dataset/split/
 ```
 
-The split lists were committed before labelling and training: `<TODO: commit link>`.
+The split lists in `dataset/splits/` are authoritative. Do not regenerate them after labelling:
+each image and its mask must remain in the split named by its list. The `dataset/split/`
+folders are copies of raw images from split creation; they are not the undistorted training
+images.
+
+The current dataset is organized as follows:
+
+| Path | Contents |
+|---|---|
+| `dataset/raw/` | Original camera images annotated in Label Studio |
+| `dataset/labels/result.json` | Original COCO polygon export, in raw-image coordinates |
+| `dataset/splits/{train,val,test}.txt` | Fixed split membership by image filename |
+| `dataset/images/{train,val,test}/` | Undistorted images used for training and evaluation |
+| `dataset/masks/{train,val,test}/` | Binary PNG masks, matching image filenames |
+| `dataset/labels/{train,val,test}.json` | COCO polygons transformed to undistorted image coordinates |
+| `dataset/check/` | Sample overlays for manually checking mask alignment |
+
+Once undistorted images are in `dataset/images/{train,val,test}/`, create the split-specific
+masks and labels with:
+
+```bash
+python convert_masks.py
+```
+
+The converter matches Label Studio's UUID-prefixed COCO filenames to the split lists by the
+original image filename suffix. Review the overlays in `dataset/check/` before training.
 
 ### 3. Labelling
 `<TODO: tool, export format, folder>`.
