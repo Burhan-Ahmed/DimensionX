@@ -35,25 +35,30 @@ The completion criteria are divided into individual engineering components to en
 ### 2.3 Segmentation Model Development
 
 - [x] Custom U-Net architecture implemented using PyTorch.
-- [ ] Training pipeline implemented and executed.
-- [ ] Training and validation loss recorded.
-- [ ] Best model checkpoint saved.
-- [ ] Early stopping or an equivalent training termination strategy implemented.
-- [ ] Model predictions generated on unseen test images.
+- [x] Training pipeline implemented and executed.
+- [x] Training and validation loss recorded.
+- [x] Best model checkpoint saved.
+- [x] Early stopping or an equivalent training termination strategy implemented.
+- [x] Model predictions generated on unseen test images.
 
-**Evidence:** Model source code, training history, saved checkpoint, and predicted segmentation masks.
+**Evidence:** Training and evaluation notebook at `../Model/code/Pipeline.ipynb`,
+training history, saved checkpoint, and predicted segmentation masks under `../Model/results/`.
 
 ### 2.4 Model Evaluation
 
-- [ ] Test-set mask IoU calculated.
-- [ ] mAP\@0.5 calculated using a documented mask-based evaluation protocol.
-- [ ] mAP\@0.5:0.95 calculated using IoU thresholds from 0.50 to 0.95.
-- [ ] Precision calculated.
-- [ ] Recall calculated.
-- [ ] Quantitative evaluation results saved.
+- [x] Test-set mask IoU calculated.
+- [x] mAP\@0.5 calculated using the documented single-object-per-image mask protocol.
+- [x] mAP\@0.5:0.95 calculated using IoU thresholds from 0.50 to 0.95.
+- [x] Precision calculated.
+- [x] Recall calculated.
+- [x] Quantitative evaluation results saved.
 - [ ] Predicted masks visually compared with ground-truth masks.
 
-**Evidence:** Evaluation report, metric tables, CSV/JSON results, and visual comparisons.
+**Evidence:** `../Model/results/stats/test_metrics.json`,
+`../Model/results/stats/per_image_test_iou.csv`,
+`../Model/results/stats/instance_ap_results.csv`, and predictions in
+`../Model/results/test_predictions/`. Predicted-versus-ground-truth visual comparisons
+remain to be documented.
 
 ### 2.5 Physical Measurement Pipeline
 
@@ -97,7 +102,8 @@ The project will be considered complete when:
 
 1. Camera calibration and image undistortion have been verified.
 2. The annotated dataset and fixed data split are available.
-3. The segmentation model has been trained and evaluated on the independent test set.
+3. The segmentation model has been trained and evaluated on the independent test set, and
+   the segmentation quality target has been met.
 4. The measurement pipeline produces physical dimensions in millimetres.
 5. Estimated measurements have been validated against digital calliper measurements.
 6. Reliability and failure conditions have been investigated.
@@ -105,19 +111,20 @@ The project will be considered complete when:
 
 ## 4. Current Development Status
 
-| Component                           | Current status    |
-| ----------------------------------- | ----------------- |
-| Project objectives and scope        | Documented        |
-| Custom PyTorch U-Net architecture   | Implemented       |
-| Training pipeline                   | Pending execution |
-| Model evaluation                    | Pending           |
-| Camera calibration verification     | Pending evidence  |
-| Dataset and annotation verification | Pending evidence  |
-| Pixel-to-mm conversion              | Pending           |
-| Calliper validation                 | Pending           |
-| Failure and confidence analysis     | Pending           |
-| Final documentation                 | In progress       |
+| Component                           | Current status                                      |
+| ----------------------------------- | --------------------------------------------------- |
+| Project objectives and scope        | Documented                                          |
+| Custom PyTorch U-Net architecture   | Implemented                                         |
+| Training pipeline                   | Run; checkpoint and history saved                  |
+| Model evaluation                    | Metrics and predictions saved; visual comparison pending |
+| Segmentation IoU target             | Not met (mean per-image test IoU: 0.777; target: 0.80) |
+| Camera calibration verification     | Calibration artifacts available; evidence review pending |
+| Dataset and annotation verification | Split images and masks available                    |
+| Pixel-to-mm conversion              | Pending                                             |
+| Calliper validation                 | Pending                                             |
+| Failure and confidence analysis     | Pending                                             |
+| Final documentation                 | In progress                                         |
 
-**Status note:** 
-## Not finished
-- Items 4-10 (see unticked lines above): I can complete it but time ran out after the model stage.
+**Status note:** Segmentation training and quantitative test evaluation have been run. The
+saved results do not meet the mean mask IoU target, and the physical measurement pipeline,
+calliper validation and remaining reliability experiments are unfinished.

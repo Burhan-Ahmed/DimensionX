@@ -40,6 +40,18 @@ I selected a 5% MAPE target as an initial engineering acceptance criterion becau
 
 I selected a mean mask IoU of 0.80 as the target because the measurement pipeline depends on accurately identifying the object's boundaries. Poor segmentation can directly affect the extracted dimensions and introduce errors into the pixel-to-millimetre conversion. A higher overlap between predicted and ground-truth masks provides evidence that the segmentation component is suitable for subsequent measurement experiments.
 
+**Recorded outcome:** The saved test results report mean per-image mask IoU of **0.7770**
+(pooled pixel IoU **0.7763**) on 9 test images. This is below the 0.80 target. The recorded
+precision is **0.7873** and recall is **0.9825**. These values are in
+`../Model/results/stats/test_metrics.json`; per-image IoU values are in
+`../Model/results/stats/per_image_test_iou.csv`. The small test set limits how broadly these
+results should be generalized.
+
+The notebook also reports instance-mask AP@0.5 of **1.0000** and mAP@0.5:0.95 of **0.5920**
+using a custom 101-point interpolated precision calculation. It assumes one ground-truth
+object per image and treats each non-empty predicted mask as one detection. These are
+segmentation metrics, not physical measurement accuracy.
+
 ## 3. Experimental Environment and Reproducibility
 
 To ensure that experimental results can be reproduced and independently verified, I will document the following configuration:
@@ -59,11 +71,15 @@ To ensure that experimental results can be reproduced and independently verified
 | Dataset split | 70% training / 20% validation / 10% testing |
 | Prediction threshold | 0.5 |
 
-The actual hardware and software configuration will be recorded from the execution environment rather than assumed.
+The development-computer configuration is recorded above. The exact Google Colab runtime and
+GPU used for the saved model run were not recorded. The notebook uses a custom PyTorch U-Net,
+512 × 512 letterboxed inputs, batch size 2, learning rate `1e-4`, seed 42, and a 0.5
+prediction threshold; the best saved checkpoint is from epoch 17.
 
 ## 4. Reporting and Evidence Requirements
 
 For every quantitative result, I will provide the corresponding experimental evidence.
+Segmentation results have been saved; physical measurement results remain future work.
 
 ### Physical Measurement Accuracy
 
@@ -91,7 +107,7 @@ For every quantitative result, I will provide the corresponding experimental evi
 
 ## 5. Expected Outcome
 
-The expected outcome is a reproducible computer vision measurement pipeline that can:
+The intended outcome is a reproducible computer vision measurement pipeline that can:
 
 1. Correct smartphone camera distortion.
 2. Segment a wooden object from its background.
@@ -100,4 +116,8 @@ The expected outcome is a reproducible computer vision measurement pipeline that
 5. Validate physical measurements against digital callipers.
 6. Identify unreliable measurement conditions and document system limitations.
 
-The project will be evaluated against MO-1 and MO-2 using the specified experimental procedures and acceptance targets. Failing to meet a target will be reported transparently with supporting evidence and analysis.
+The segmentation objective (MO-2) has been evaluated and its current result is below target.
+The physical accuracy objective (MO-1) has not yet been evaluated because the
+pixel-to-millimetre measurement pipeline and calliper experiment are not implemented.
+Any future results should be compared against the stated targets and reported with their
+supporting evidence.
