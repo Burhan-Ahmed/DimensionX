@@ -14,7 +14,7 @@ Develop a computer vision system to segment a rectangular wooden object and esti
 2. **Dataset Collection and Annotation (1.5 hours)**
    - Capture at least 70 images of the wooden object.
    - Undistort images using calibration parameters.
-   - Annotate object boundaries using CVAT.
+   - Annotate object boundaries using Label Studio.
    - Create fixed 70/20/10 train/validation/test splits.
 
 3. **Segmentation Model (1.5 hours)**
