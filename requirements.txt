@@ -1,0 +1,14 @@
+numpy==2.4.6
+opencv-python==4.14.0.94
+
+# PyTorch is platform-specific; leave version selection to the local or Colab runtime.
+torch
+torchvision
+
+# Direct dependencies imported by the training and evaluation notebook.
+albumentations==2.0.8
+matplotlib
+pandas==2.2.3
+scikit-learn==1.6.1
+segmentation-models-pytorch==0.6.0
+tqdm
