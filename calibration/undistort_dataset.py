@@ -18,9 +18,11 @@ def main():
     K, dist, size = cal["K"], cal["dist"], tuple(int(v) for v in cal["size"])
     os.makedirs(args.dst, exist_ok=True)
     for path in sorted(glob.glob(os.path.join(args.src, "*.jpg"))):
+        # Ignore EXIF rotation so image coordinates stay consistent with calibration.
         img = cv2.imread(path, cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION)
         if img.shape[1::-1] != size:
             raise SystemExit(f"{path} is {img.shape[1::-1]}, calibration is {size}")
+        # Reuse K as the output camera matrix to retain the calibrated image dimensions.
         out = cv2.undistort(img, K, dist, None, K)
         name = os.path.basename(path)
         cv2.imwrite(os.path.join(args.dst, name), out, [cv2.IMWRITE_JPEG_QUALITY, 95])
