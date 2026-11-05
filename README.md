@@ -12,8 +12,8 @@ checkerboard reference.
 
 ## Setup
 
-The checked-in `requirements.txt` contains the dependencies needed by the calibration
-script. From the repository root, create and activate a virtual environment and install them:
+The checked-in `requirements.txt` pins the dependencies used by the calibration script.
+From the repository root, create and activate a virtual environment and install them:
 
 ```powershell
 py -m venv .venv
@@ -22,9 +22,9 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-The segmentation plan uses PyTorch, but PyTorch is not currently listed in
-`requirements.txt`; install a version appropriate for your Python and hardware if you add or
-run a training pipeline. The repository does not pin a Python version or dependency versions.
+The segmentation plan uses PyTorch, but no training code is present yet, so PyTorch is not
+included in the current requirements. Add a PyTorch version appropriate for the target runtime
+when implementing training. The repository does not pin a Python version.
 
 ## Hardware
 

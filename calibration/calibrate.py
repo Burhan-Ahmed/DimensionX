@@ -64,7 +64,7 @@ def main():
 
     args = parser.parse_args()
 
-    # Create the 3D checkerboard coordinates.
+    # Checkerboard corners are planar; square_mm sets the coordinate scale.
     grid = np.zeros((PATTERN[0] * PATTERN[1], 3), np.float32)
 
     grid[:, :2] = (
@@ -75,7 +75,6 @@ def main():
     obj_pts, img_pts, used = [], [], []
     size = None
 
-    # Detect checkerboard corners in every image.
     image_paths = sorted(glob.glob(args.images))
 
     if not image_paths:
@@ -121,18 +120,15 @@ def main():
             f"Minimum required: {args.min_images}."
         )
 
-    # Configure calibration flags.
     flags = (
         cv2.CALIB_FIX_K3 | cv2.CALIB_ZERO_TANGENT_DIST
         if args.fix_k3 else 0
     )
 
-    # First calibration: use every successfully detected image.
     rms, K, dist, errors = calibrate(
         obj_pts, img_pts, size, flags
     )
 
-    # Classify images according to the selected error threshold.
     valid_indices = np.where(errors <= args.max_err)[0]
     high_error_indices = np.where(errors > args.max_err)[0]
 
@@ -199,7 +195,6 @@ def main():
                 "Please capture additional calibration images."
             )
 
-        # Select only images that passed the initial assessment.
         obj_pts = [obj_pts[i] for i in valid_indices]
         img_pts = [img_pts[i] for i in valid_indices]
 
@@ -208,14 +203,12 @@ def main():
 
     elif choice == "A":
 
-        # Retain every successfully detected image.
         selected = used.copy()
         dropped = []
 
     else:
         raise SystemExit("Invalid choice. Run the script again.")
 
-    # Recalibrate using the selected images.
     rms, K, dist, final_errors = calibrate(
         obj_pts, img_pts, size, flags
     )
@@ -252,7 +245,6 @@ def main():
             "reprojection error threshold. Inspect the dataset."
         )
 
-    # Save the calibration parameters.
     output_path = Path(args.out)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -273,4 +265,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
